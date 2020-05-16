@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css?family=Exo|Monoton&display=swap");
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #070712;
+  color: #606063;
+  overflow: hidden;
+  font-family: 'Exo';
+  /* font-family: 'Bad Script'; */
+}
+
+h1 {
+  font-family: 'Monoton';
+}
+
+#__next {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.canvas > div {
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 1;
+}
