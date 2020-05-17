@@ -1,6 +1,6 @@
 import state from '@/Store'
 import { LinearFilter, RGBFormat, VideoTexture } from 'three'
-import { Block, useBlock } from '@Components/Blocks'
+import { ThreeBlock, useBlock } from '@/Components/ThreeBlock'
 import { HTML } from 'drei'
 import { Cross, Stripe, ThreeContent } from '@Components/ThreePlane'
 
@@ -31,7 +31,7 @@ export const ThreePages: React.FC<any> = () => {
   return (
     <>
       {/* First section */}
-      <Block factor={1.5} offset={0}>
+      <ThreeBlock factor={1.5} offset={0}>
         <ThreeContent left map={img1}>
           {
             <HTML
@@ -52,9 +52,9 @@ export const ThreePages: React.FC<any> = () => {
             </HTML>
           }
         </ThreeContent>
-      </Block>
+      </ThreeBlock>
       {/* Second section */}
-      <Block factor={2.0} offset={1}>
+      <ThreeBlock factor={2.0} offset={1}>
         <ThreeContent map={img2}>
           {
             <HTML
@@ -76,17 +76,17 @@ export const ThreePages: React.FC<any> = () => {
             </HTML>
           }
         </ThreeContent>
-      </Block>
+      </ThreeBlock>
       {/* Stripe */}
-      <Block factor={-1.0} offset={1}>
+      <ThreeBlock factor={-1.0} offset={1}>
         <Stripe />
-      </Block>
+      </ThreeBlock>
       {/* Last section */}
-      <Block factor={1.5} offset={2}>
+      <ThreeBlock factor={1.5} offset={2}>
         <ThreeContent left map={img3}>
-          <Block factor={-0.5}>
+          <ThreeBlock factor={-0.5}>
             <Cross />
-          </Block>
+          </ThreeBlock>
           {
             <HTML
               prepend
@@ -104,7 +104,7 @@ export const ThreePages: React.FC<any> = () => {
             </HTML>
           }
         </ThreeContent>
-      </Block>
+      </ThreeBlock>
     </>
   )
 }

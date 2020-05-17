@@ -1,8 +1,7 @@
-import { ShaderMaterial, Color } from "three"
-import { ReactThreeFiber } from "react-three-fiber"
+import { Color, ShaderMaterial } from 'three'
+import { ReactThreeFiber } from 'react-three-fiber'
 
-
-export class GlitchWaveMaterial extends ShaderMaterial {
+export default class GlitchWaveMaterial extends ShaderMaterial {
   constructor() {
     super({
       vertexShader: `uniform float scale;
@@ -37,8 +36,8 @@ export class GlitchWaveMaterial extends ShaderMaterial {
         scale: { value: 0 },
         shift: { value: 0 },
         opacity: { value: 1 },
-        color: { value: new Color("white") }
-      }
+        color: { value: new Color('white') },
+      },
     })
   }
 
@@ -83,7 +82,10 @@ export class GlitchWaveMaterial extends ShaderMaterial {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      glitchWaveMaterial: ReactThreeFiber.MaterialNode<GlitchWaveMaterial, [THREE.ShaderMaterialParameters]>
+      glitchWaveMaterial: ReactThreeFiber.MaterialNode<
+        GlitchWaveMaterial,
+        [THREE.ShaderMaterialParameters]
+      >
     }
   }
 }

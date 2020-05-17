@@ -1,4 +1,4 @@
-import { createRef, MutableRefObject } from 'react'
+import { MutableRefObject, createRef } from 'react'
 
 const state = {
   sections: 3,
@@ -20,6 +20,7 @@ const state = {
   ),
   top: createRef() as MutableRefObject<number>,
   mouse: createRef() as MutableRefObject<number[]>,
+  layers: { DEFAULT_LAYER: 0, OCCLUSION_LAYER: 1, PARTICLES_LAYER: 2 } as any,
 }
 
 export default state

@@ -49,7 +49,7 @@ function useBlock() {
   }
 }
 
-const Block: React.FC<IBlockProps> = ({
+const ThreeBlock: React.FC<IBlockProps> = ({
   children,
   offset,
   factor,
@@ -72,4 +72,4 @@ const Block: React.FC<IBlockProps> = ({
   )
 }
 
-export { Block, useBlock }
+export { ThreeBlock, useBlock }

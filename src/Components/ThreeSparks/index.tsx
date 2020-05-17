@@ -4,6 +4,7 @@ import { extend, useFrame, useThree } from 'react-three-fiber'
 import lerp from 'lerp'
 import * as meshline from 'threejs-meshline'
 import { Group, ShaderMaterial } from 'three'
+import state from '@/Store'
 
 extend(meshline)
 
@@ -11,21 +12,25 @@ const r = () => Math.max(0.2, Math.random())
 
 function Fatline({ curve, width, color, speed }) {
   const material = useRef() as MutableRefObject<ShaderMaterial>
-  useFrame(() => (material.current.uniforms.dashOffset.value -= speed))
+  useFrame(() => {
+    material.current.uniforms.dashOffset.value -= speed
+  })
   return (
-    <mesh>
-      <meshLine attach="geometry" vertices={curve} />
-      <meshLineMaterial
-        attach="material"
-        ref={material}
-        transparent
-        depthTest={false}
-        lineWidth={width}
-        color={color}
-        dashArray={0.1}
-        dashRatio={0.95}
-      />
-    </mesh>
+    <>
+      <mesh layers={state.layers.OCCLUSION_LAYER}>
+        <meshLine attach="geometry" vertices={curve} />
+        <meshLineMaterial
+          attach="material"
+          ref={material}
+          transparent
+          depthTest={true}
+          lineWidth={width}
+          color={color}
+          dashArray={0.1}
+          dashRatio={0.95}
+        />
+      </mesh>
+    </>
   )
 }
 
@@ -68,12 +73,12 @@ export default function ThreeSparks({ mouse, count, colors, radius = 10 }) {
     if (ref.current) {
       ref.current.rotation.x = lerp(
         ref.current.rotation.x,
-        0 + mouse.current[1] / aspect / 200,
+        0 + mouse.current[1] / aspect / 200 / 5,
         0.1,
       )
       ref.current.rotation.y = lerp(
         ref.current.rotation.y,
-        0 + mouse.current[0] / aspect / 400,
+        0 + mouse.current[0] / aspect / 400 / 5,
         0.1,
       )
     }
@@ -81,7 +86,7 @@ export default function ThreeSparks({ mouse, count, colors, radius = 10 }) {
 
   return (
     <group ref={ref}>
-      <group position={[-radius * 2, -radius, -10]} scale={[1, 1.3, 1]}>
+      <group position={[radius * 2, -radius, -20]} scale={[1, 1.3, 1]}>
         {lines.map((props, index) => (
           <Fatline key={index} {...props} />
         ))}

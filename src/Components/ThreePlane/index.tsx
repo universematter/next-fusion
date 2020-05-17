@@ -1,8 +1,8 @@
-import { Euler, Group, Mesh, Texture, Vector3 } from 'three'
+import { Color, Euler, Group, Mesh, Texture, Vector3 } from 'three'
 import { MutableRefObject, useRef } from 'react'
 import lerp from 'lerp'
-import { useBlock } from '@Components/Blocks'
-import { GlitchWaveMaterial } from '@/Components/ThreeMaterials/GlitchWaveMaterial'
+import { useBlock } from '@/Components/ThreeBlock'
+import GlitchWaveMaterial from '@/Components/ThreeShaders/GlitchWaveMaterial/GlitchWaveMaterial'
 import state from '@/Store'
 import { extend, useFrame } from 'react-three-fiber'
 
@@ -18,7 +18,7 @@ interface IThreePlaneProps {
 }
 
 export const ThreePlane: React.FC<IThreePlaneProps> = ({
-  color = 'white',
+  color = 'black',
   map,
   ...props
 }) => {
@@ -42,15 +42,32 @@ export const ThreePlane: React.FC<IThreePlaneProps> = ({
   })
 
   return (
-    <mesh {...props} ref={mesh}>
-      <planeBufferGeometry attach="geometry" args={[1, 1, 32, 32]} />
-      <glitchWaveMaterial
-        ref={material}
-        attach="material"
-        color={color}
-        map={map}
-      />
-    </mesh>
+    <>
+      <mesh
+        {...props}
+        ref={mesh}
+        layers={state.layers.DEFAULT_LAYER}
+        receiveShadow
+        castShadow
+      >
+        <planeBufferGeometry attach="geometry" args={[1, 1, 32, 32]} />
+        <glitchWaveMaterial
+          ref={material}
+          attach="material"
+          color={color}
+          map={map}
+        />
+      </mesh>
+      <mesh
+        {...props}
+        layers={state.layers.OCCLUSION_LAYER}
+        receiveShadow
+        castShadow
+      >
+        <planeBufferGeometry attach="geometry" args={[1, 1, 32, 32]} />
+        <meshBasicMaterial attach="material" color={new Color('black')} />
+      </mesh>
+    </>
   )
 }
 

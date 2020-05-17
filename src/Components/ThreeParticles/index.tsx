@@ -1,6 +1,6 @@
-import React, { useRef, useMemo, MutableRefObject } from 'react'
+import React, { MutableRefObject, useMemo, useRef } from 'react'
 import { useFrame, useThree } from 'react-three-fiber'
-import { Object3D, InstancedMesh, PointLight, Color } from 'three'
+import { Color, InstancedMesh, Object3D, PointLight } from 'three'
 
 interface IParticlesProps {
   count: number
@@ -71,7 +71,12 @@ export const ThreeParticles: React.FC<IParticlesProps> = ({ count, mouse }) => {
   })
   return (
     <>
-      <pointLight ref={light} distance={40} intensity={8} color={new Color('lightblue')} />
+      <pointLight
+        ref={light}
+        distance={40}
+        intensity={8}
+        color={new Color('lightblue')}
+      />
       <instancedMesh ref={mesh} args={[null, null, count] as any}>
         <dodecahedronBufferGeometry attach="geometry" args={[0.2, 0]} />
         <meshPhongMaterial attach="material" color="#050505" />

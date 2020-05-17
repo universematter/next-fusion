@@ -3,12 +3,15 @@ import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
-// import { GlitchPass } from './postprocessing/Glitchpass'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+
 import { WaterPass } from './postprocessing/Waterpass'
-import { Color, Scene } from 'three'
-import ThreeSparks from '../ThreeSparks'
+import { Vector2, WebGLRenderTarget } from 'three'
+import AdditiveBlendingShader from '../ThreeShaders/GlitchWaveMaterial/AdditiveBlendingShader'
+import VolumetricLightShader from '../ThreeShaders/VolumetricLightShader'
 import state from '@/Store'
 
 extend({
@@ -18,39 +21,71 @@ extend({
   WaterPass,
   UnrealBloomPass,
   FilmPass,
+  OrbitControls,
 })
 
-export default function ParticlesScene() {
-  const scene = useRef() as MutableRefObject<Scene>
-  const { camera } = useThree()
+export default function Effects() {
+  const { gl, scene, camera, size } = useThree()
+  const occlusionRenderTarget = useMemo(
+    () => new WebGLRenderTarget(size.width, size.height),
+    [size],
+  )
+  const occlusionComposer = useRef() as MutableRefObject<EffectComposer>
+  const composer = useRef() as MutableRefObject<EffectComposer>
+
+  useEffect(() => {
+    occlusionComposer.current.setSize(size.width, size.height)
+    composer.current.setSize(size.width, size.height)
+  }, [size])
+
+  const aspect = useMemo(() => new Vector2(size.width, size.height), [size])
+
   useFrame(({ gl }) => {
-    gl.autoClear = false
+    gl.autoClear = true
+    // gl.clear()
+    camera.layers.set(state.layers.OCCLUSION_LAYER)
+    occlusionComposer.current.render()
     // gl.clearDepth()
-    gl.clear()
-    gl.render(scene.current, camera)
-  }, 101)
+    camera.layers.set(state.layers.DEFAULT_LAYER)
+    composer.current.render()
+  }, 1)
+
   return (
-    <scene ref={scene}>
-      <fog attach="fog" args={[0xffffff, 50, 100]} />
-      {/* <ambientLight /> */}
-      <pointLight distance={200} intensity={4} color={new Color('white')} />
-      {/* <mesh position={[-0.5, 0, 100]} scale={[200, 200, 1]}>
-        <boxBufferGeometry attach="geometry" />
-        <meshBasicMaterial attach="material" color="yellow" />
+    <>
+      {/* <mesh layers={state.layers.OCCLUSION_LAYER} position={[0, 4.5, -10]}>
+        <sphereBufferGeometry attach="geometry" args={[5, 32, 32]} />
+        <meshBasicMaterial attach="material" />
       </mesh> */}
-      <ThreeSparks
-        count={20}
-        mouse={state.mouse}
-        colors={[
-          '#A2CCB6',
-          '#FCEEB5',
-          '#EE786E',
-          '#e0feff',
-          'lightpink',
-          'lightblue',
-        ]}
-      />
-    </scene>
+      <effectComposer
+        ref={occlusionComposer}
+        args={[gl, occlusionRenderTarget]}
+        renderToScreen={false}
+      >
+        <renderPass attachArray="passes" args={[scene, camera]} />
+        <unrealBloomPass attachArray="passes" args={[aspect, 2, 1, 0]} />
+        <shaderPass
+          attachArray="passes"
+          args={[VolumetricLightShader]}
+          needsSwap={false}
+        />
+      </effectComposer>
+      <effectComposer ref={composer} args={[gl]}>
+        <renderPass attachArray="passes" args={[scene, camera]} />
+
+        <waterPass attachArray="passes" factor={0.025} />
+        <shaderPass
+          attachArray="passes"
+          args={[AdditiveBlendingShader]}
+          uniforms-tAdd-value={occlusionRenderTarget.texture}
+        />
+        <shaderPass
+          attachArray="passes"
+          args={[FXAAShader]}
+          uniforms-resolution-value={[1 / size.width, 1 / size.height]}
+          renderToScreen
+        />
+      </effectComposer>
+    </>
   )
 }
 
@@ -61,7 +96,9 @@ declare global {
         EffectComposer,
         typeof EffectComposer
       >
+      orbitControls: ReactThreeFiber.Node<OrbitControls, typeof OrbitControls>
       renderPass: ReactThreeFiber.Node<RenderPass, typeof RenderPass>
+      shaderPass: ReactThreeFiber.Node<ShaderPass, typeof ShaderPass>
       waterPass: ReactThreeFiber.Node<WaterPass, typeof WaterPass>
       unrealBloomPass: ReactThreeFiber.Node<
         UnrealBloomPass,
