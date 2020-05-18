@@ -41,7 +41,9 @@
       "@Services/*": ["src/Services/*"],
       "@Public/*": ["public/*"],
       "@Styled/*": ["src/Styled/*"],
-      "@Test/*": ["test/*"]
+      "@Test/*": ["test/*"],
+      "three": ["src/Utils/three"],
+      "../../../build/three.module.js": ["src/Utils/three"]
     }
   },
   "exclude": [

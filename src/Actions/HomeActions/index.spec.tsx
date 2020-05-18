@@ -12,7 +12,7 @@ const middlewares = [thunk]
 const mockStore = configureMockStore(middlewares)
 
 describe('Home action tests', () => {
-  test('Map test', async () => {
+  test('Map test', () => {
     const store = mockStore()
 
     const expectedActions = [
@@ -33,7 +33,7 @@ describe('Home action tests', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  test('Reset test', async () => {
+  test('Reset test', () => {
     const store = mockStore({
       home: {
         version: 1,
@@ -51,7 +51,7 @@ describe('Home action tests', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  test('GetApod test', async () => {
+  /* test('GetApod test', async () => {
     const store = mockStore({})
 
     const expectedActions = [
@@ -75,5 +75,5 @@ describe('Home action tests', () => {
     await store.dispatch<any>(HomeActions.GetApod({ params: { hd: true } }))
 
     expect(store.getActions()).toEqual(expectedActions)
-  })
+  }) */
 })

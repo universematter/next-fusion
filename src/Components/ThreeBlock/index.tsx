@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { useFrame, useThree } from 'react-three-fiber'
 import lerp from 'lerp'
-import state from '@Store'
+import { state } from '@Store'
 import { Group } from 'three'
 
 const offsetContext = createContext(0)

@@ -1,19 +1,14 @@
-import { MutableRefObject, useEffect, useRef } from 'react'
+import { MutableRefObject, Suspense, useEffect, useRef } from 'react'
 import lerp from 'lerp'
 import { Canvas, useFrame, useThree } from 'react-three-fiber'
 
-import state from '@Store'
+import { state } from '@Store'
 import { ScrollArea } from '@Styled/Layout'
-import {
-  Color,
-  Material,
-  Mesh,
-  Uncharted2ToneMapping,
-  sRGBEncoding,
-} from 'three'
+import { Color, Mesh, Uncharted2ToneMapping, sRGBEncoding } from 'three'
 import { ThreePages } from '../ThreePages'
 import ThreeSparks from '../ThreeSparks'
 import Effects from '../ThreeEffects'
+import { Material } from 'three'
 
 function ThreeCanvas() {
   // const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
@@ -39,6 +34,7 @@ function ThreeCanvas() {
       <Canvas
         className="canvas"
         shadowMap
+        orthographic
         camera={{
           zoom: state.zoom,
           position: [0, 0, 500],
@@ -50,7 +46,7 @@ function ThreeCanvas() {
         }}
       >
         <ThreeApp />
-        {/* <Controls /> */}
+        <Controls />
       </Canvas>
       <ScrollArea
         id="scroll"
@@ -72,40 +68,41 @@ function Controls() {
 
 function ThreeApp() {
   // const camera = useRef() as MutableRefObject<PerspectiveCamera>
-  const { camera } = useThree()
+  // const { camera } = useThree()
   // useEffect(() => void setDefaultCamera(camera.current), [])
-  useFrame(() => camera.updateMatrixWorld())
   return (
     <>
-      <ThreePages />
-      <Startup />
-      {/* <fog attach="fog" args={[0xffffff, 50, 100]} /> */}
-      <ambientLight />
-      <pointLight
-        castShadow
-        distance={100}
-        intensity={10}
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-        color={new Color('white')}
-      />
-      {/* <mesh position={[-0.5, 0, 100]} scale={[200, 200, 1]}>
+      <Suspense fallback={null}>
+        <ThreePages />
+        <Startup />
+        {/* <fog attach="fog" args={[0xffffff, 50, 100]} /> */}
+        <ambientLight />
+        <pointLight
+          castShadow
+          distance={100}
+          intensity={10}
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          color={new Color('white')}
+        />
+        {/* <mesh position={[-0.5, 0, 100]} scale={[200, 200, 1]}>
         <boxBufferGeometry attach="geometry" />
         <meshBasicMaterial attach="material" color="yellow" />
       </mesh> */}
-      <ThreeSparks
-        count={20}
-        mouse={state.mouse}
-        colors={[
-          '#A2CCB6',
-          '#FCEEB5',
-          '#EE786E',
-          '#e0feff',
-          'lightpink',
-          'lightblue',
-        ]}
-      />
-      <Effects />
+        <ThreeSparks
+          count={20}
+          mouse={state.mouse}
+          colors={[
+            '#A2CCB6',
+            '#FCEEB5',
+            '#EE786E',
+            '#e0feff',
+            'lightpink',
+            'lightblue',
+          ]}
+        />
+        <Effects />
+      </Suspense>
     </>
   )
 }

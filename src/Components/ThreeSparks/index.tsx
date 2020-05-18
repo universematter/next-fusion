@@ -1,10 +1,10 @@
-import * as THREE from 'three'
+import { CatmullRomCurve3, Vector3 } from 'three'
 import { MutableRefObject, useMemo, useRef } from 'react'
 import { extend, useFrame, useThree } from 'react-three-fiber'
 import lerp from 'lerp'
 import * as meshline from 'threejs-meshline'
 import { Group, ShaderMaterial } from 'three'
-import state from '@/Store'
+import { state } from '@Store'
 
 extend(meshline)
 
@@ -38,7 +38,7 @@ export default function ThreeSparks({ mouse, count, colors, radius = 10 }) {
   const lines = useMemo(
     () =>
       new Array(count).fill(0).map((_, index) => {
-        const pos = new THREE.Vector3(
+        const pos = new Vector3(
           Math.sin(0) * radius * r(),
           Math.cos(0) * radius * r(),
           0,
@@ -47,7 +47,7 @@ export default function ThreeSparks({ mouse, count, colors, radius = 10 }) {
           const angle = (index / 20) * Math.PI * 2
           return pos
             .add(
-              new THREE.Vector3(
+              new Vector3(
                 Math.sin(angle) * radius * r(),
                 Math.cos(angle) * radius * r(),
                 0,
@@ -55,7 +55,7 @@ export default function ThreeSparks({ mouse, count, colors, radius = 10 }) {
             )
             .clone()
         })
-        const curve = new THREE.CatmullRomCurve3(points).getPoints(1000)
+        const curve = new CatmullRomCurve3(points).getPoints(1000)
         return {
           color: colors[Math.floor(colors.length * Math.random())],
           width: Math.max(0.1, (0.2 * index) / 10),

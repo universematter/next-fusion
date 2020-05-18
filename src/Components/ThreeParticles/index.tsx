@@ -38,6 +38,7 @@ export const ThreeParticles: React.FC<IParticlesProps> = ({ count, mouse }) => {
     )
     // Run through the randomized data to calculate some movement
     particles.forEach((particle, i) => {
+      // eslint-disable-next-line prefer-const
       let { t, factor, speed, xFactor, yFactor, zFactor } = particle
       // There is no sense or reason to any of this, just messing around with trigonometric functions
       t = particle.t += speed / 2

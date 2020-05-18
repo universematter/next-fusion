@@ -6,7 +6,7 @@ const withPlugins = require('next-compose-plugins')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
 const withConfig = nextRuntimeDotenv({ public: ['API_URL', 'API_KEY'] })
-const withTM = require('next-transpile-modules')(['three', 'drei'])
+// const withTM = require('next-transpile-modules')(['three', 'drei'])
 
 const nextConfig = {
   typescript: {
@@ -49,5 +49,5 @@ const nextConfig = {
 }
 
 module.exports = withConfig(
-  withPlugins([withTM, withBundleAnalyzer], nextConfig),
+  withPlugins([/* withTM,  */ withBundleAnalyzer], nextConfig),
 )

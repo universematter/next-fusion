@@ -1,4 +1,5 @@
-import React, { MutableRefObject, useEffect, useMemo, useRef } from 'react'
+import { MutableRefObject, useEffect, useMemo, useRef } from 'react'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
@@ -9,10 +10,10 @@ import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import { WaterPass } from './postprocessing/Waterpass'
-import { Vector2, WebGLRenderTarget } from 'three'
+import { WebGLRenderTarget } from 'three'
 import AdditiveBlendingShader from '../ThreeShaders/GlitchWaveMaterial/AdditiveBlendingShader'
 import VolumetricLightShader from '../ThreeShaders/VolumetricLightShader'
-import state from '@/Store'
+import { state } from '@Store'
 
 extend({
   EffectComposer,
@@ -38,7 +39,7 @@ export default function Effects() {
     composer.current.setSize(size.width, size.height)
   }, [size])
 
-  const aspect = useMemo(() => new Vector2(size.width, size.height), [size])
+  // const aspect = useMemo(() => new Vector2(size.width, size.height), [size])
 
   useFrame(({ gl }) => {
     gl.autoClear = true
@@ -62,7 +63,7 @@ export default function Effects() {
         renderToScreen={false}
       >
         <renderPass attachArray="passes" args={[scene, camera]} />
-        <unrealBloomPass attachArray="passes" args={[aspect, 2, 1, 0]} />
+        {/* <unrealBloomPass attachArray="passes" args={[aspect, 2, 1, 0]} /> */}
         <shaderPass
           attachArray="passes"
           args={[VolumetricLightShader]}

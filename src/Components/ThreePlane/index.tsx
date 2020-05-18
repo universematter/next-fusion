@@ -3,7 +3,7 @@ import { MutableRefObject, useRef } from 'react'
 import lerp from 'lerp'
 import { useBlock } from '@/Components/ThreeBlock'
 import GlitchWaveMaterial from '@/Components/ThreeShaders/GlitchWaveMaterial/GlitchWaveMaterial'
-import state from '@/Store'
+import { state } from '@Store'
 import { extend, useFrame } from 'react-three-fiber'
 
 extend({ GlitchWaveMaterial })
@@ -23,8 +23,15 @@ export const ThreePlane: React.FC<IThreePlaneProps> = ({
   ...props
 }) => {
   const { viewportHeight, offsetFactor } = useBlock()
+  // const { camera } = useThree()
   const material = useRef() as MutableRefObject<GlitchWaveMaterial>
   const mesh = useRef() as MutableRefObject<Mesh>
+
+  // useEffect(() => {
+  //   console.log('map change', map)
+  // }, [map])
+  console.log('render plane')
+
   let last = state.top.current
   useFrame(() => {
     const { pages, top } = state
@@ -39,6 +46,8 @@ export const ThreePlane: React.FC<IThreePlaneProps> = ({
       0.1,
     )
     last = top.current
+    // material.current.uniforms.texture.needsUpdate = true
+    // camera.updateMatrixWorld()
   })
 
   return (
@@ -54,8 +63,8 @@ export const ThreePlane: React.FC<IThreePlaneProps> = ({
         <glitchWaveMaterial
           ref={material}
           attach="material"
-          color={color}
           map={map}
+          color={color}
         />
       </mesh>
       <mesh
@@ -63,6 +72,7 @@ export const ThreePlane: React.FC<IThreePlaneProps> = ({
         layers={state.layers.OCCLUSION_LAYER}
         receiveShadow
         castShadow
+        position-z={-1}
       >
         <planeBufferGeometry attach="geometry" args={[1, 1, 32, 32]} />
         <meshBasicMaterial attach="material" color={new Color('black')} />
@@ -75,6 +85,7 @@ interface IContentProps {
   children?: JSX.Element[] | JSX.Element
   left?: boolean
   map?: Texture
+  onTextureReady?: Function
 }
 
 export const ThreeContent: React.FC<IContentProps> = ({
@@ -85,11 +96,12 @@ export const ThreeContent: React.FC<IContentProps> = ({
   const { contentMaxWidth, canvasWidth, margin } = useBlock()
   const aspect = 1.75
   const alignRight = (canvasWidth - contentMaxWidth - margin) / 2
+
   return (
     <group position={[alignRight * (left ? -1 : 1), 0, 0]}>
       <ThreePlane
         scale={[contentMaxWidth, contentMaxWidth / aspect, 1]}
-        color="#bfe2ca"
+        color="#333333"
         map={map}
       />
       {children}

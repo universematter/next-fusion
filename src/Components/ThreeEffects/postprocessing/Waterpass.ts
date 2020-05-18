@@ -92,7 +92,7 @@ export class WaterPass extends Pass {
     if (WaterShader === undefined) {
       console.error('THREE.WaterPass relies on THREE.WaterShader')
     }
-    var shader = new WaterShader()
+    const shader = new WaterShader()
     this.uniforms = UniformsUtils.clone(shader.uniforms)
     if (dt_size === undefined) dt_size = 64
     this.uniforms['resolution'].value = new Vector2(dt_size, dt_size)
