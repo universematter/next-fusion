@@ -29,9 +29,11 @@ class VideoLoader extends Loader {
     const videoLength = 4
 
     const onProgress = (video) => {
-      if (Math.round(video.buffered.end(0)) == videoLength) {
-        video.removeEventListener('progress', onProgress)
-        video.play()
+      if (video.buffered) {
+        if (Math.round(video.buffered.end(0)) == videoLength) {
+          video.removeEventListener('progress', onProgress)
+          video.play()
+        }
       }
     }
 
@@ -66,6 +68,13 @@ class VideoLoader extends Loader {
 
     video.addEventListener('canplay', onVideoLoad, false)
     video.addEventListener('error', onVideoError, false)
+    video.addEventListener(
+      'play',
+      () => {
+        console.log('Video is playing')
+      },
+      false,
+    )
 
     if (url.substr(0, 5) !== 'data:') {
       if (this.crossOrigin !== undefined) video.crossOrigin = this.crossOrigin

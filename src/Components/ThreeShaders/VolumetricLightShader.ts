@@ -1,9 +1,9 @@
-import * as THREE from 'three'
+import { Vector2 } from 'three'
 
 export default {
   uniforms: {
     tDiffuse: { value: null },
-    lightPosition: { value: new THREE.Vector2(0.5, 0.75) },
+    lightPosition: { value: new Vector2(0.5, 0.75) },
     exposure: { value: 0.18 },
     decay: { value: 0.95 },
     density: { value: 0.75 },

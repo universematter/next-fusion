@@ -1,139 +1,137 @@
-import { Color, Euler, Group, Mesh, Texture, Vector3 } from 'three'
-import { MutableRefObject, useRef } from 'react'
+import { Euler, Mesh, Texture, Vector2, Vector3, Vector4 } from 'three'
+import { MutableRefObject, forwardRef, useMemo, useRef } from 'react'
 import lerp from 'lerp'
 import { useBlock } from '@/Components/ThreeBlock'
-import GlitchWaveMaterial from '@/Components/ThreeShaders/GlitchWaveMaterial/GlitchWaveMaterial'
+import GlitchWaveMaterial from '@/Components/ThreeShaders/GlitchWaveMaterial'
 import { state } from '@Store'
-import { extend, useFrame } from 'react-three-fiber'
+import { extend, useFrame, useThree } from 'react-three-fiber'
+import Fake3dShader from '../ThreeShaders/Fake3dShader'
 
 extend({ GlitchWaveMaterial })
 
 interface IThreePlaneProps {
+  frustumCulled?: boolean
   color?: string
-  map?: Texture
-  scale?: Vector3 | [number, number, number]
-  rotation?: Euler | [number, number, number]
-  position?: Vector3 | [number, number, number]
-  mouse?: MutableRefObject<number[]>
+  texture?: Texture
+  position?: [number, number, number] | Vector3
+  scale?: [number, number, number] | Vector3
+  rotation?: [number, number, number] | Euler
+  shift?: number
+  opacity?: number
+  args?: any
+
+  size?: number
+  aspect?: number
 }
 
-export const ThreePlane: React.FC<IThreePlaneProps> = ({
-  color = 'black',
-  map,
-  ...props
-}) => {
-  const { viewportHeight, offsetFactor } = useBlock()
-  // const { camera } = useThree()
-  const material = useRef() as MutableRefObject<GlitchWaveMaterial>
-  const mesh = useRef() as MutableRefObject<Mesh>
+export const ThreePlane = forwardRef<Mesh, IThreePlaneProps>(
+  (
+    { color = 'white', shift = 1, opacity = 1, args, texture, ...props },
+    ref,
+  ) => {
+    const { viewportHeight, offsetFactor } = useBlock()
+    const material = useRef() as MutableRefObject<GlitchWaveMaterial>
 
-  // useEffect(() => {
-  //   console.log('map change', map)
-  // }, [map])
-  console.log('render plane')
+    let textureDepth = new Texture()
+    if (texture instanceof Array) {
+      textureDepth = texture[1]
+      texture = texture[0]
+    }
 
-  let last = state.top.current
-  useFrame(() => {
-    const { pages, top } = state
-    material.current.scale = lerp(
-      material.current.scale,
-      offsetFactor - top.current / ((pages - 1) * viewportHeight),
-      0.1,
+    let last = state.top.current
+    const mouseVector = new Vector2()
+    useFrame(() => {
+      const { pages, top, mouse } = state
+      mouseVector.set(mouse.current[0] * 0.05, mouse.current[1] * 0.05)
+      material.current.scale = lerp(
+        material.current.scale,
+        offsetFactor - top.current / ((pages - 1) * viewportHeight),
+        0.1,
+      )
+      material.current.shift = lerp(
+        material.current.shift,
+        (top.current - last) / shift,
+        0.1,
+      )
+      last = top.current
+    })
+
+    const { size, gl, clock } = useThree()
+
+    const imageAspect = useMemo(() => {
+      return texture ? texture.image.height / texture.image.width : 1
+    }, [texture])
+
+    const [resolution, threshold, pixelRatio] = useMemo(() => {
+      let a1, a2
+      if (size.height / size.width < imageAspect) {
+        a1 = 1
+        a2 = size.height / size.width / imageAspect
+      } else {
+        a1 = (size.width / size.height) * imageAspect
+        a2 = 1
+      }
+      const threshold = new Vector2(35, 15)
+      // gl.setViewport(0, 0, size.width, size.height)
+      // const context = gl.getContext()
+      // const positionLocation = context.getAttribLocation(
+      //   context.getParameter(context.CURRENT_PROGRAM),
+      //   'a_position',
+      // )
+      // context.enableVertexAttribArray(positionLocation)
+      // context.vertexAttribPointer(
+      //   positionLocation,
+      //   2,
+      //   context.FLOAT,
+      //   false,
+      //   0,
+      //   0,
+      // )
+      const pixelRatio = gl.getPixelRatio()
+      const resolution = new Vector4(size.width, size.height, a1, a2)
+      return [resolution, threshold, pixelRatio]
+    }, [gl, imageAspect, size.height, size.width])
+
+    return (
+      <>
+        <mesh ref={ref} {...props}>
+          <planeBufferGeometry attach="geometry" args={args} />
+          <shaderMaterial
+            attach="material"
+            ref={material}
+            args={[Fake3dShader]}
+            uniforms-resolution-value={resolution}
+            uniforms-mouse-value={mouseVector}
+            uniforms-threshold-value={threshold}
+            uniforms-time-value={clock.getElapsedTime()}
+            uniforms-pixelRatio-value={pixelRatio}
+            uniforms-texture-value={texture}
+            uniforms-hasTexture-value={!!texture}
+            uniforms-textureDepth-value={textureDepth}
+            transparent
+            opacity={opacity}
+          />
+          {/* <glitchWaveMaterial
+            ref={material}
+            attach="material"
+            color={color}
+            uniforms-texture-value={texture}
+            uniforms-textureDepth-value={textureDepth}
+            transparent
+            opacity={opacity}
+          /> */}
+        </mesh>
+        {/* <mesh
+          {...props}
+          layers={state.layers.OCCLUSION_LAYER}
+          receiveShadow
+          castShadow
+          position-z={-1}
+        >
+          <planeBufferGeometry attach="geometry" args={args} />
+          <meshBasicMaterial attach="material" color={new Color('black')} />
+        </mesh> */}
+      </>
     )
-    material.current.shift = lerp(
-      material.current.shift,
-      (top.current - last) / 120,
-      0.1,
-    )
-    last = top.current
-    // material.current.uniforms.texture.needsUpdate = true
-    // camera.updateMatrixWorld()
-  })
-
-  return (
-    <>
-      <mesh
-        {...props}
-        ref={mesh}
-        layers={state.layers.DEFAULT_LAYER}
-        receiveShadow
-        castShadow
-      >
-        <planeBufferGeometry attach="geometry" args={[1, 1, 32, 32]} />
-        <glitchWaveMaterial
-          ref={material}
-          attach="material"
-          map={map}
-          color={color}
-        />
-      </mesh>
-      <mesh
-        {...props}
-        layers={state.layers.OCCLUSION_LAYER}
-        receiveShadow
-        castShadow
-        position-z={-1}
-      >
-        <planeBufferGeometry attach="geometry" args={[1, 1, 32, 32]} />
-        <meshBasicMaterial attach="material" color={new Color('black')} />
-      </mesh>
-    </>
-  )
-}
-
-interface IContentProps {
-  children?: JSX.Element[] | JSX.Element
-  left?: boolean
-  map?: Texture
-  onTextureReady?: Function
-}
-
-export const ThreeContent: React.FC<IContentProps> = ({
-  left,
-  children,
-  map,
-}): React.ReactElement => {
-  const { contentMaxWidth, canvasWidth, margin } = useBlock()
-  const aspect = 1.75
-  const alignRight = (canvasWidth - contentMaxWidth - margin) / 2
-
-  return (
-    <group position={[alignRight * (left ? -1 : 1), 0, 0]}>
-      <ThreePlane
-        scale={[contentMaxWidth, contentMaxWidth / aspect, 1]}
-        color="#333333"
-        map={map}
-      />
-      {children}
-    </group>
-  )
-}
-
-export function Cross() {
-  const ref = useRef() as MutableRefObject<Group>
-  const { viewportHeight } = useBlock()
-  useFrame(() => {
-    const curTop = state.top.current
-    const curY = ref.current.rotation.z
-    const nextY = (curTop / ((state.pages - 1) * viewportHeight)) * Math.PI
-    ref.current.rotation.z = lerp(curY, nextY, 0.1)
-  })
-  return (
-    <group ref={ref} scale={[2, 2, 2]}>
-      <ThreePlane scale={[1, 0.2, 0.2]} color="#e2bfca" />
-      <ThreePlane scale={[0.2, 1, 0.2]} color="#e2bfca" />
-    </group>
-  )
-}
-
-export function Stripe() {
-  const { contentMaxWidth } = useBlock()
-  return (
-    <ThreePlane
-      scale={[400, contentMaxWidth, 1]}
-      rotation={[0, 0, Math.PI / 4]}
-      position={[0, 0, -1]}
-      color="#171725"
-    />
-  )
-}
+  },
+)

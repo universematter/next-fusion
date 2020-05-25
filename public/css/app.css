@@ -1,11 +1,26 @@
 @import url('https://fonts.googleapis.com/css?family=Exo|Monoton&display=swap');
 
+*,
+*::after,
+*::before {
+	box-sizing: border-box;
+}
+
+:root {
+  font-size: 14px;
+}
+
+::selection {
+  background: #2ddab8;
+  color: white;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
-  background: #070712;
-  color: #606063;
+  background: #0c0f13;
+  color: #8b8b8b;
   overflow: hidden;
   font-family: 'Exo';
   /* font-family: 'Bad Script'; */
@@ -22,7 +37,7 @@ h1 {
 }
 
 .canvas > div {
-  font-size: 20px;
   pointer-events: none;
   z-index: 1;
+  font-size: 1.2rem;
 }

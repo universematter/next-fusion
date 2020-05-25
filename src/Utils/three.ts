@@ -40,6 +40,10 @@ export {
   RingGeometry,
   RingBufferGeometry,
 } from 'three/src/geometries/RingGeometry.js'
+export {
+  TextGeometry,
+  TextBufferGeometry,
+} from 'three/src/geometries/TextGeometry.js'
 export { EdgesGeometry } from 'three/src/geometries/EdgesGeometry.js'
 export { Material } from 'three/src/materials/Material.js'
 export { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial.js'

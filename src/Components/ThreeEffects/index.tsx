@@ -2,27 +2,16 @@ import { MutableRefObject, useEffect, useMemo, useRef } from 'react'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
-import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import { WaterPass } from './postprocessing/Waterpass'
 import { WebGLRenderTarget } from 'three'
-import AdditiveBlendingShader from '../ThreeShaders/GlitchWaveMaterial/AdditiveBlendingShader'
+import AdditiveBlendingShader from '../ThreeShaders/AdditiveBlendingShader'
 import VolumetricLightShader from '../ThreeShaders/VolumetricLightShader'
 import { state } from '@Store'
 
 extend({
-  EffectComposer,
-  ShaderPass,
-  RenderPass,
   WaterPass,
-  UnrealBloomPass,
-  FilmPass,
-  OrbitControls,
 })
 
 export default function Effects() {
@@ -93,18 +82,7 @@ export default function Effects() {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      effectComposer: ReactThreeFiber.Node<
-        EffectComposer,
-        typeof EffectComposer
-      >
-      orbitControls: ReactThreeFiber.Node<OrbitControls, typeof OrbitControls>
-      renderPass: ReactThreeFiber.Node<RenderPass, typeof RenderPass>
-      shaderPass: ReactThreeFiber.Node<ShaderPass, typeof ShaderPass>
       waterPass: ReactThreeFiber.Node<WaterPass, typeof WaterPass>
-      unrealBloomPass: ReactThreeFiber.Node<
-        UnrealBloomPass,
-        typeof UnrealBloomPass
-      >
     }
   }
 }

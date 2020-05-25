@@ -13,17 +13,14 @@ import { FlexScreenCenter } from '@/Styled/Layout'
 // #region Interface Imports
 // #endregion Interface Imports
 
-const ThreeContainerDynamic = dynamic(
-  () => import('@Components/ThreeContainer'),
-  {
-    ssr: false,
-    loading: () => (
-      <FlexScreenCenter>
-        <h1>Loading 3d effects...</h1>
-      </FlexScreenCenter>
-    ),
-  },
-)
+const ThreeContainerDynamic = dynamic(() => import('@/Components/ThreeApp'), {
+  ssr: false,
+  loading: () => (
+    <FlexScreenCenter>
+      <h1>Loading 3d effects...</h1>
+    </FlexScreenCenter>
+  ),
+})
 
 const Home: NextPage<IHomePage.IProps, IHomePage.InitialProps> = () => {
   // const home = useSelector((state: IStore) => state.home)
