@@ -5,7 +5,8 @@ import { ThreeText } from '../ThreeText'
 import { HTML } from 'drei'
 
 export const ThreeParagraph = ({
-  texture,
+  textureUrl,
+  textureDepthUrl,
   index,
   offset,
   factor,
@@ -23,7 +24,8 @@ export const ThreeParagraph = ({
     <ThreeBlock factor={factor} offset={offset}>
       <group position={[left ? -alignRight : alignRight, 0, 0]}>
         <ThreePlane
-          texture={texture}
+          textureUrl={textureUrl}
+          textureDepthUrl={textureDepthUrl}
           args={[1, 1, 32, 32]}
           shift={75}
           size={size}

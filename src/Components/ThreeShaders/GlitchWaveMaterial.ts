@@ -35,9 +35,7 @@ void main() {
 
 const uniforms = {
   texture: { value: null },
-  get hasTexture() {
-    return { value: !!this.texture.value }
-  },
+  hasTexture: { value: 0 },
   scale: { value: 0 },
   shift: { value: 0 },
   opacity: { value: 1 },
@@ -82,18 +80,14 @@ export default class GlitchWaveMaterial extends ShaderMaterial {
     return this.uniforms.shift.value
   }
 
-  // set map(value) {
-  //   this.uniforms.hasTexture.value = !!value
-  //   this.uniforms.texture.value = value
-  // }
-  // set map(value) {
-  //   this.uniforms.hasTexture.value = !!value
-  //   this.uniforms.texture.value = value
-  // }
+  set texture(value) {
+    this.uniforms.hasTexture.value = !!value
+    this.uniforms.texture.value = value
+  }
 
-  // get map() {
-  //   return this.uniforms.texture.value
-  // }
+  get texture() {
+    return this.uniforms.texture.value
+  }
 
   get color() {
     return this.uniforms.color.value

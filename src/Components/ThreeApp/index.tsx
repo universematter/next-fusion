@@ -5,7 +5,7 @@ import { Canvas, useFrame, useThree } from 'react-three-fiber'
 import '@/Utils/ThreeComponents'
 import { state } from '@Store'
 import { ScrollArea } from '@Styled/Layout'
-import { Mesh } from 'three'
+import { Mesh, ShaderMaterial } from 'three'
 import { ThreeContent } from '../ThreeContent'
 import { ThreeGLTF } from '@Components/ThreeGLTF'
 // import ThreeSparks from '../ThreeSparks'
@@ -100,20 +100,16 @@ function Controls() {
 
 function Startup() {
   const ref = useRef() as MutableRefObject<Mesh>
-  useFrame(
-    () =>
-      ((ref.current.material as Material).opacity = lerp(
-        ref.current.material as Material,
-        0,
-        0.025,
-      )),
-  )
+  useFrame(() => {
+    const opacity = (ref.current.material as ShaderMaterial).uniforms.opacity
+    opacity.value = lerp(opacity.value, 0, 0.025)
+  })
   return (
     <ThreePlane
       ref={ref}
       color="#0e0e0f"
       position={[0, 0, 200]}
-      scale={[100, 100, 1]}
+      scale={[300, 300, 1]}
     />
   )
 }

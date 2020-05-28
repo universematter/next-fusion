@@ -2,26 +2,11 @@ import { state } from '@Store'
 import { ThreeBlock, useBlock } from '@/Components/ThreeBlock'
 import { HTML } from 'drei'
 import { ThreePlane } from '@Components/ThreePlane'
-import { useMemo } from 'react'
 import { ThreeMultilineText, ThreeText } from '@/Components/ThreeText'
 import { ThreeParagraph } from '@/Components/ThreeParagraph'
-import { useLoadManager } from '@/Utils/useLoadManager'
-import { LinearFilter, Texture } from 'three'
 
 export const ThreeContent: React.FC<any> = () => {
   const { contentMaxWidth: w, canvasWidth, canvasHeight, mobile } = useBlock()
-
-  const textures = useLoadManager<Texture[]>(
-    state.paragraphs.map(({ texture }) => texture),
-  )
-  const texturesDepth = useLoadManager<Texture[]>(
-    state.paragraphs.map(({ textureDepth }) => textureDepth),
-  )
-
-  useMemo(
-    () => textures.forEach((texture) => (texture.minFilter = LinearFilter)),
-    [textures],
-  )
 
   const pixelWidth = w * state.zoom
   return (
@@ -59,12 +44,7 @@ export const ThreeContent: React.FC<any> = () => {
         />
       </ThreeBlock>
       {state.paragraphs.map((props, index) => (
-        <ThreeParagraph
-          key={index}
-          index={index}
-          {...props}
-          texture={[textures[index], texturesDepth[index]]}
-        />
+        <ThreeParagraph key={index} index={index} {...props} />
       ))}
       {state.stripes.map(({ offset, color, height }, index) => (
         <ThreeBlock key={index} factor={-1.5} offset={offset}>
